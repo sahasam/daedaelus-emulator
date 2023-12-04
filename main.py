@@ -40,5 +40,5 @@ async def main_triangle():
 
     await asyncio.gather(*tasks)
 
-asyncio.run(main_one_link())
+#asyncio.run(main_one_link())
 asyncio.run(main_triangle())
