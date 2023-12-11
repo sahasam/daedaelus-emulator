@@ -1,4 +1,4 @@
-# Daedaelus Simulator
+# Daedaelus Emulator
 
 Python proof of concept of a link simulator. Uses an event loop to simulate parallell handling of packets
 on links and ports.

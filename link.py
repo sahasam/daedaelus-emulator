@@ -27,6 +27,7 @@ class DDLLink:
                 await self.host_a.recv_queues[self.port_a].put(data)
                 self.host_b.data_sent_events[self.port_b].clear()
 
+            # Transfer control back to event loop while waiting for new packets to move
             await asyncio.wait(
                 [self.host_a.data_sent_events[self.port_a].wait(), self.host_b.data_sent_events[self.port_b].wait()],
                 return_when=asyncio.FIRST_COMPLETED

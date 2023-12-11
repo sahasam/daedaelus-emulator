@@ -3,11 +3,17 @@
 import struct
 
 class DDLPacket:
-    def __init__(self, aProto=0, aLive=0, aState=0, aTrans=0):
-        self.aProto = aProto
-        self.aLive  = aLive
-        self.aState = aState
-        self.aTrans = aTrans
+    def __init__(self, type):
+        # INITIALIZATION PACKET
+        #  PB   LL   SM   ST     PB   LL   SM   ST
+        # 0x00 0x00 0x00 0x00   0x00 0x00 0x00 0x00
+        self.slice0 = bytearray([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        self.data   = bytearray(b'\x00'*56)
+        self.rt_count = 0
+        self.last_rt = 0
 
-    def pack(self):
-        return struct.pack('8B56x', self.aProto, self.aLive, self.aState, self.aTrans)
+    def get_frame(self) -> bytes:
+        return struct.pack('8B56x', *self.slice0)
+    
+    def swap(self) -> None:
+        self.slice0[0:4], self.slice0[4:8] = self.slice0[4:8], self.slice0[0:4]
