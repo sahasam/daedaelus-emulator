@@ -5,7 +5,7 @@
 import asyncio
 import time
 
-from packet import DDLPacket
+from .packet import DDLPacket
 
 class DDLHost():
     def __init__(self, hostname, num_ports):
