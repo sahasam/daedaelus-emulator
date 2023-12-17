@@ -5,8 +5,7 @@
 import asyncio
 
 class DDLLink:
-    def __init__(self, link_name, host_a, port_a, host_b, port_b):
-        self.link_name = link_name
+    def __init__(self, host_a, port_a, host_b, port_b):
         self.host_a = host_a
         self.port_a = port_a
         self.host_b = host_b
