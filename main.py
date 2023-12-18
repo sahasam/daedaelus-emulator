@@ -1,10 +1,9 @@
 import asyncio
 
 import networkx as nx
-import websockets
-import json
 
 from ddl.emulator import DDLEmulator
+from ddl.websocket import DDLWebsocket
 
 async def main_one_link():
     G = nx.Graph()
@@ -60,11 +59,11 @@ async def main_tensor():
         (1, {"hname": "HOST_B", "num_ports": 8}),
         (2, {"hname": "HOST_C", "num_ports": 8}),
         (3, {"hname": "HOST_D", "num_ports": 8}),
-        (4, {"hname": "HOST_D", "num_ports": 8}),
-        (5, {"hname": "HOST_D", "num_ports": 8}),
-        (6, {"hname": "HOST_D", "num_ports": 8}),
-        (7, {"hname": "HOST_D", "num_ports": 8}),
-        (8, {"hname": "HOST_D", "num_ports": 8}),
+        (4, {"hname": "HOST_E", "num_ports": 8}),
+        (5, {"hname": "HOST_F", "num_ports": 8}),
+        (6, {"hname": "HOST_G", "num_ports": 8}),
+        (7, {"hname": "HOST_H", "num_ports": 8}),
+        (8, {"hname": "HOST_I", "num_ports": 8}),
     ])
     G.add_edges_from([
         (0,1), (0,3), (0,4),
@@ -77,8 +76,13 @@ async def main_tensor():
     ])
 
     emulator = DDLEmulator(G)
-    await asyncio.gather(*emulator.tasks)
+    # websocket = DDLWebsocket('', 8765, emulator)
+    async def snapshot():
+        await asyncio.sleep(1)
+        payload = emulator.get_instant_network_state()
+        print(payload)
+    await asyncio.gather(asyncio.create_task(snapshot()), *emulator.tasks)
 
-#asyncio.run(main_triangle())
+# asyncio.run(main_triangle())
 # asyncio.run(main_quad())
 asyncio.run(main_tensor())

@@ -11,10 +11,13 @@ class DDLHost():
     def __init__(self, hostname, num_ports):
         self.hostname = hostname
         self.num_ports = num_ports
+
         self.send_queues = [asyncio.Queue() for _ in range(num_ports)]
         self.recv_queues = [asyncio.Queue() for _ in range(num_ports)]
+
         self.data_sent_events = [asyncio.Event() for _ in range(num_ports)]
-        self.error = False
+        self.error = False 
+
         self.reserved_ports = 0
         self.reserved_port_types = [0 for _ in range(num_ports)]
 
