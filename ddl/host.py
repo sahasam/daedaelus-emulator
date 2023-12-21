@@ -70,6 +70,12 @@ class DDLHost():
                 ports.append(asyncio.create_task(self.host_loop(i)))
         return ports
 
+    async def run(self):
+            await asyncio.wait(
+                [self.host_a.data_sent_events[self.port_a].wait(), self.host_b.data_sent_events[self.port_b].wait()],
+                return_when=asyncio.FIRST_COMPLETED
+            )
+
     
     def get_state(self):
         """return last understanding of state on each port"""
@@ -83,6 +89,11 @@ class DDLHost():
 
     def table_update(self, port, pkt, error=False):
         slice0 = None
+        if port == 0 and self.hostname == 'HOST_0':
+                pkt.rt_count += 1
+                pkt.frequency = 1/(time.time() - pkt.last_rt)
+                pkt.last_rt = time.time()
+                print(f"{round(pkt.frequency, 2)}Hz")
         match pkt.slice0:
             # INITIALIZE
             case       b'\x00\x00\x00\x00\x00\x00\x00\x00': # 0
@@ -102,10 +113,7 @@ class DDLHost():
                 else:     slice0 = bytearray([0x20, 0x5A, 0x01, 0x50,  0x20, 0xA5, 0x01, 0x90])
                 
             case       b'\x20\x5A\x01\x50\x20\xA5\x01\x90': # 4
-                # pkt.rt_count += 1
-                # pkt.frequency = 1/(time.time() - pkt.last_rt)
-                # pkt.last_rt = time.time()
-                # print(f"{self.hostname}:{port} {round(pkt.frequency, 2)}Hz")
+                
 
                 if error: slice0 = bytearray([0x20, 0xA5, 0x01, 0x55,  0x20, 0x5A, 0x01, 0xA5])
                 else:     slice0 = bytearray([0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00])   

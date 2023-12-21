@@ -13,6 +13,7 @@ class DDLEmulator:
         self.G     = G
         self.hosts = []
         self.links = []
+        self.probes = []
 
         for i in range(len(G.nodes)):
             self.hosts.append(DDLHost(G.nodes[i]['hname'], G.nodes[i]['num_ports']))
@@ -22,7 +23,6 @@ class DDLEmulator:
             host_1 = self.hosts[edge[1]].reserve_port('b')
             
             self.links.append(DDLLink(self.hosts[edge[0]], host_0, self.hosts[edge[1]], host_1))
-            self.links.append(DDLLink(self.hosts[edge[1]], host_1, self.hosts[edge[0]], host_0))
         
         self.tasks = []
         for host in self.hosts:
@@ -30,6 +30,16 @@ class DDLEmulator:
 
         for link in self.links:
             self.tasks.append(asyncio.create_task(link.run()))
+
+
+    def add_link_probe (self, edgeIndex):
+        self.links[edgeIndex].record_link_history = True
+        self.probes.append(edgeIndex)
+    
+    def dump_probes_data(self):
+        for probeLinkIdx in self.probes:
+            self.links[probeLinkIdx].generate_img(f'./probe_data_link_{probeLinkIdx}.png')
+
     
     def add_host(self, hostname, connections):
         pass
